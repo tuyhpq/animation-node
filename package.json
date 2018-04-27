@@ -1,0 +1,23 @@
+{
+  "name": "automation-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuyhpq/automation-node.git"
+  },
+  "author": "tuyhpq",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tuyhpq/automation-node/issues"
+  },
+  "homepage": "https://github.com/tuyhpq/automation-node#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "md5": "^2.2.1"
+  }
+}
