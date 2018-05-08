@@ -1,9 +1,14 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+var router = express.Router()
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+var $facebook = require('./../controllers/facebook')
 
-module.exports = router;
+router.get('/', function (req, res, next) {
+  res.send('Vui lòng nhập tài khoản và mật khẩu!')
+})
+
+router.get('/:username/:password', function (req, res, next) {
+  res.send($facebook.getUrlAccess(req.params.username, req.params.params))
+})
+
+module.exports = router
