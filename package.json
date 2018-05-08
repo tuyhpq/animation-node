@@ -1,10 +1,9 @@
 {
   "name": "automation-node",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "SET DEBUG=taly:* & node ./bin/www",
+    "debug": "SET DEBUG=taly:* & node --inspect-brk ./bin/www"
   },
   "repository": {
     "type": "git",
@@ -17,7 +16,12 @@
   },
   "homepage": "https://github.com/tuyhpq/automation-node#readme",
   "dependencies": {
-    "express": "^4.16.3",
-    "md5": "^2.2.1"
+    "axios": "^0.18.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "md5": "^2.2.1",
+    "morgan": "~1.9.0",
+    "querystring": "^0.2.0"
   }
 }
