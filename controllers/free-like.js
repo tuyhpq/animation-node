@@ -1,44 +1,31 @@
 const Axios = require('axios')
 const QueryString = require('querystring')
+var $handle = require('./../services/handle')
 
-var axios = Axios.create({
-  maxRedirects: 0,
-  validateStatus: function (status) {
-    return status >= 200 && status < 303;
-  },
-  proxy: {
-    "host": "113.161.68.146",
-    "port": 8080
-  }
-})
-
+var axios = Axios.create()
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 /**
  * 
  */
-module.exports.fromThoiDaiSo = function (req, resRoot) {
-  // axios.post('http://thoidaiso.org/post.php', QueryString.stringify({ id: '2004260029839498' }), )
-  //   .then((res) => {
-  //     console.log(res.data)
-  //     resRoot.send(res.data)
-  //   })
-  //   .catch((err) => {
-  //     console.log(err.message)
-  //     resRoot.send(err)
-  //   })
+module.exports.fromAbclike = function (rootReq, rootRes) {
+  var { id } = rootReq.body
 
-  axios.get('http://thoidaiso.org/tang-like-facebook-gia-re/')
+  axios.post('https://abclike.xyz/post.php', QueryString.stringify({ 'id': id }), { headers: { 'x-requested-with': 'XMLHttpRequest' } })
     .then((res) => {
-      debugger
-      console.log('xxxxxxx')
-      console.log(res.data)
-      resRoot.send(res.data)
+      var message = $handle.extractDataFromHtml(res.data, `alert("`, '")')
+      if (!message) {
+        throw {
+          message: 'Lỗi không xác định.'
+        }
+      }
+      rootRes.json({
+        message: message
+      })
     })
     .catch((err) => {
-      console.log('xxxxxxx2')
-      console.log(err.message)
-      resRoot.send(err)
+      rootRes.status(500).json({
+        message: err.message
+      })
     })
-
 }
