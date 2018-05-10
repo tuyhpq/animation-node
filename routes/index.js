@@ -5,14 +5,7 @@ var $facebook = require('./../controllers/facebook')
 var $vipfb = require('./../services/vipfb')
 var $freeLike = require('./../controllers/free-like')
 
-router.get('/free-like', function (req, res) {
-  res.json({
-    url: 'http://abclike.xyz/post.php',
-    name: 'id'
-  })
-})
-
-router.post('/free-like', $freeLike.fromAbclike)
+router.post('/free-like', $freeLike.submit)
 
 router.get('/', function (req, res) {
   var accessToken = 'EAAAAUaZA8jlABAOZAZBJR6h2vv6uOGoFlZA5CZCohK591km5sfRYFBwTHAuk3uZCzmcFORpD9R968ZAXDoxH0FA9q7IMijjPOgA2EctLPWyuvnuVr3rHn6ZA3sik29ZCZBbSxECzZAkwGYFg3bdakEbUgcoCfZA2dQ6Qwm3ZAx5ZASO8oTPAZDZD'
