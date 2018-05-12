@@ -18,6 +18,18 @@ router.get('/', function (req, res) {
   })
 })
 
+router.post('/auto-request', function (req, res) {
+  var { cookie, id, limit, captcha } = req.body
+
+  var fbsub = $fbsub.submit(cookie, id, limit, captcha, (err, data) => {
+    if (err) {
+      res.status(400).send(err.message)
+    } else {
+      res.send(data)
+    }
+  })
+})
+
 router.post('/login', function (req, res) {
   var { username, password, accessToken } = req.body
   var info = {}
