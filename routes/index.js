@@ -2,16 +2,16 @@ var express = require('express')
 var router = express.Router()
 
 var $facebook = require('./../controllers/facebook')
-var $vipfb = require('./../services/vipfb')
+var $fbsub = require('./../services/fbsub')
 var $freeLike = require('./../controllers/free-like')
 
 router.post('/free-like', $freeLike.submit)
 
 router.get('/', function (req, res) {
-  var accessToken = 'EAAAAUaZA8jlABAOZAZBJR6h2vv6uOGoFlZA5CZCohK591km5sfRYFBwTHAuk3uZCzmcFORpD9R968ZAXDoxH0FA9q7IMijjPOgA2EctLPWyuvnuVr3rHn6ZA3sik29ZCZBbSxECzZAkwGYFg3bdakEbUgcoCfZA2dQ6Qwm3ZAx5ZASO8oTPAZDZD'
-  var vipfb = $vipfb.getInterface(accessToken, (err, data) => {
+  var accessToken = 'EAAAAUaZA8jlABACEwemtqNGEYd7ZBXRmBK8ZCdPLAZARZAYTpmGZB9DRZBHMlnM119OnV5aZCnt5kzEJ6foUhFtPiSPhEaYvwpEZBBAxhRvcw4tQBELjugL8zpnIgiS0aGXkIlYFKCIcljqZBiDUMMGXgvAvYPCmOFEmz8bBr9ZBZAFeBo8WWxbL6GEQMCtzmNVczxwZD'
+  var fbsub = $fbsub.getInterface(accessToken, (err, data) => {
     if (err) {
-      res.send(err)
+      res.send(err.message)
     } else {
       res.send(data)
     }
