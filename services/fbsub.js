@@ -9,11 +9,26 @@ const axios = $axios.create({
   'baseURL': BASE_URL
 })
 
+module.exports = {
+  autoRequest: {
+    'get': function (accessToken, next) {
+      getInterface(accessToken, accessAutoRequest, next)
+    },
+    'submit': submitAutoRequest
+  },
+  autoLiker: {
+    'get': function (accessToken, next) {
+      getInterface(accessToken, accessAutoLiker, next)
+    },
+    'submit': submitAutoLiker
+  }
+}
+
 /**
  * Get interface
  */
-exports.getInterface = function (accessToken, next) {
-  let data = { accessToken, next }
+function getInterface(accessToken, mission, next) {
+  let data = { accessToken, mission, next }
 
   accessIndex(data)
 }
@@ -51,14 +66,17 @@ function login(inputName, hiddenName, data) {
       }
 
       data.cookie += '; ' + cookie.toString()
-      accessAuto(data)
+      data.mission(data)
     })
     .catch((err) => {
       data.next(err, null)
     })
 }
 
-function accessAuto(data) {
+/**
+ * Auto request
+ */
+function accessAutoRequest(data) {
   axios.get('/account/follow', {
     headers: {
       'Cookie': data.cookie
@@ -70,7 +88,7 @@ function accessAuto(data) {
 
       if (credit === '0') {
         var waitingTime = $handle.extractDataFromHtml(res.data, `var seconds = `, ';')
-        if (isNaN(waitingTime)) {
+        if (isNaN(waitingTime) || waitingTime === '') {
           throw { 'message': 'Máy chủ quá tải.', 'reload': true }
         } else {
           data.next(null, { 'waitingTime': Number(waitingTime) })
@@ -78,7 +96,7 @@ function accessAuto(data) {
       } else if (!credit || !urlCaptcha) {
         throw { 'message': 'Không thể lấy dữ liệu tại máy chủ kết bạn.' }
       } else {
-        getCaptcha(urlCaptcha, credit, data)
+        getCaptchaForAutoRequest(urlCaptcha, credit, data)
       }
     })
     .catch((err) => {
@@ -86,7 +104,7 @@ function accessAuto(data) {
     })
 }
 
-function getCaptcha(urlCaptcha, credit, data) {
+function getCaptchaForAutoRequest(urlCaptcha, credit, data) {
   axios.get(urlCaptcha, {
     responseType: 'arraybuffer',
     headers: {
@@ -97,14 +115,14 @@ function getCaptcha(urlCaptcha, credit, data) {
       var captchaBase64 = new Buffer(res.data, 'binary').toString('base64')
       var captchaSrc = 'data:image/png;base64,' + captchaBase64
 
-      respond(data, credit, captchaSrc)
+      respondAutoRequest(data, credit, captchaSrc)
     })
     .catch((err) => {
       data.next(err, null)
     })
 }
 
-function respond(data, credit, captchaSrc) {
+function respondAutoRequest(data, credit, captchaSrc) {
   data.next(null, {
     'credit': credit,
     'captchaSrc': captchaSrc,
@@ -113,9 +131,9 @@ function respond(data, credit, captchaSrc) {
 }
 
 /**
- * Submit
+ * Submit auto-request
  */
-exports.submit = function (cookie, id, limit, captcha, next) {
+function submitAutoRequest(cookie, id, limit, captcha, next) {
   axios.post('/account/follow', Stringify({ id, limit, captcha }), {
     headers: {
       'Cookie': cookie
@@ -123,10 +141,7 @@ exports.submit = function (cookie, id, limit, captcha, next) {
   })
     .then((res) => {
       var message = $handle.extractDataFromHtml(res.data, `<font color="red">`, '<')
-      if (typeof message !== 'string') {
-        throw { 'message': 'Lỗi không xác định.', 'reload': true }
-      }
-      else if (message.indexOf('not have enough credits') !== -1) {
+      if (message.indexOf('not have enough credits') !== -1) {
         throw { 'message': 'Bạn chưa đủ điều kiện hoạt động tại máy chủ này.' }
       }
       else if (message.indexOf('Security Code is incorrect') !== -1) {
@@ -137,6 +152,103 @@ exports.submit = function (cookie, id, limit, captcha, next) {
       }
       else if (message.indexOf('have been sent') !== -1) {
         next(null, { 'message': 'Tự động kết bạn thành công.' })
+      }
+      else {
+        throw { 'message': 'Máy chủ quá tải.', 'reload': true }
+      }
+    })
+    .catch((err) => {
+      next(err, null)
+    })
+}
+
+/**
+ * Auto liker
+ */
+function accessAutoLiker(data) {
+  axios.get('/account/liker', {
+    headers: {
+      'Cookie': data.cookie
+    }
+  }).then(() => {
+    axios.post('/account/liker', Stringify({ 'link': '813730915452307' }), {
+      headers: {
+        'Cookie': data.cookie
+      }
+    })
+      .then((res) => {
+        var credit = $handle.extractDataFromHtml(res.data, `<b  id="credit">`, '<')
+        var urlCaptcha = $handle.extractDataFromHtml(res.data, `/account/captcha.php`, '"', true)
+
+        if (credit === '0') {
+          var waitingTime = $handle.extractDataFromHtml(res.data, `var seconds = `, ';')
+          if (isNaN(waitingTime) || waitingTime === '') {
+            throw { 'message': 'Máy chủ quá tải.', 'reload': true }
+          } else {
+            data.next(null, { 'waitingTime': Number(waitingTime) })
+          }
+        } else if (!credit || !urlCaptcha) {
+          throw { 'message': 'Không thể lấy dữ liệu tại máy chủ tăng like.' }
+        } else {
+          getCaptchaForAutoLiker(urlCaptcha, credit, data)
+        }
+      })
+      .catch((err) => {
+        data.next(err, null)
+      })
+  }).catch((err) => {
+    data.next(err, null)
+  })
+}
+
+function getCaptchaForAutoLiker(urlCaptcha, credit, data) {
+  axios.get(urlCaptcha, {
+    responseType: 'arraybuffer',
+    headers: {
+      'Cookie': data.cookie
+    }
+  })
+    .then((res) => {
+      var captchaBase64 = new Buffer(res.data, 'binary').toString('base64')
+      var captchaSrc = 'data:image/png;base64,' + captchaBase64
+
+      respondAutoLiker(data, credit, captchaSrc)
+    })
+    .catch((err) => {
+      data.next(err, null)
+    })
+}
+
+function respondAutoLiker(data, credit, captchaSrc) {
+  data.next(null, {
+    'credit': credit,
+    'captchaSrc': captchaSrc,
+    'cookie': data.cookie
+  })
+}
+
+/**
+ * Submit auto-liker
+ */
+function submitAutoLiker(cookie, id, limit, captcha, next) {
+  axios.post('/account/liker', Stringify({ id, limit, captcha, 'reactions[]': 'LIKE' }), {
+    headers: {
+      'Cookie': cookie
+    }
+  })
+    .then((res) => {
+      var message = $handle.extractDataFromHtml(res.data, `<font color="red">`, '<')
+      if (message.indexOf('not have enough credits') !== -1) {
+        throw { 'message': 'Bạn chưa đủ điều kiện hoạt động tại máy chủ này.' }
+      }
+      else if (message.indexOf('Security Code is incorrect') !== -1) {
+        throw { 'message': 'Mã captcha không chính xác.' }
+      }
+      else if (message.indexOf('not available or your followers not public') !== -1) {
+        throw { 'message': 'ID không chính xác hoặc chưa mở chế độ công khai' }
+      }
+      else if (message.indexOf('have been sent') !== -1) {
+        next(null, { 'message': 'Tăng like thành công.' })
       }
       else {
         throw { 'message': 'Máy chủ quá tải.', 'reload': true }
