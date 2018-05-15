@@ -4,6 +4,7 @@ var router = express.Router()
 var $facebook = require('./../controllers/facebook')
 var $fbsub = require('./../services/fbsub')
 var $freeLike = require('./../controllers/free-like')
+var $auth = require('./../controllers/authentication')
 
 router.post('/free-like', $freeLike.submit)
 
@@ -57,30 +58,10 @@ router.post('/auto-liker', function (req, res) {
   })
 })
 
-router.post('/login', function (req, res) {
-  var { username, password, accessToken } = req.body
-  var info = {}
-
-  if (accessToken) {
-
-  }
-  else if (username && password) {
-
-  } else {
-    res.status(400).json({
-      message: 'Vui lòng cung cấp tài khoản, mật khẩu hoặc mã truy cập để đăng nhập.'
-    })
-  }
-
-
-  res.cookie('taly', info.accessToken, { secure: true });
-  res.json({
-    message: 'Đăng nhập thành công.'
-  })
-})
+router.post('/login', $auth.login)
 
 router.get('/:username/:password', function (req, res) {
-  res.send($facebook.getUrlAccess(req.params.username, req.params.password))
+  res.send($facebook.getAccessUrl(req.params.username, req.params.password))
 })
 
 router.get('/auto-follow', function (req, res) {

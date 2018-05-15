@@ -35,3 +35,7 @@ exports.create = function (config) {
 
   return axios
 }
+
+exports.public = Axios.create({
+  timeout: 30000
+})

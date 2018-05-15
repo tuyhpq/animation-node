@@ -1,9 +1,10 @@
-var md5 = require('md5')
+const md5 = require('md5')
+const $axios = require('./../services/axios.js')
 
 /**
- * 
+ * Get access url to get access token
  */
-module.exports.getUrlAccess = function (email, password) {
+exports.getAccessUrl = function (email, password) {
   const API_SECRET = '62f8ce9f74b12f84c123cc23437a4a32'
   const data = {
     'api_key': '882a8490361da98702bf97a021ddc14d',
@@ -26,4 +27,35 @@ module.exports.getUrlAccess = function (email, password) {
   url += `?api_key=${data.api_key}&email=${data.email}&format=${data.format}&locale=${data.locale}&method=${data.method}&password=${data.password}&return_ssl_resources=${data.return_ssl_resources}&v=${data.v}&sig=${sig}`
 
   return url
+}
+
+/**
+ * Get information of a user from access token
+ */
+exports.getUserInfo = function (accessToken, next) {
+  $axios.public.get('https://graph.facebook.com/me?access_token=' + accessToken, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36'
+    }
+  })
+    .then((res) => {
+      var data = res.data
+      var user = {
+        'id': data.id,
+        'access_token': accessToken,
+        'name': data.name,
+        'username': data.username,
+        'email': data.email.toString(),
+        'phone': data.mobile_phone.toString(),
+        'birthday': new Date(data.birthday),
+        'gender': data.gender,
+        'location': data.location ? data.location.name : '',
+        'hometown': data.hometown ? data.hometown.name : '',
+        'verified': data.verified ? 1 : 0
+      }
+      next(null, user)
+    })
+    .catch((err) => {
+      next(err, null)
+    })
 }
