@@ -8,17 +8,23 @@ exports.login = function (req, res) {
   var { accessToken } = req.body
 
   if (typeof accessToken === 'string') {
-    $fb.getUserInfo(accessToken, (err, data) => {
+    $fb.getUserInfo(accessToken, (err, user) => {
       if (err) {
         res.status(500).json({ 'error': 'LOGIN_002' })
-      } else if (typeof data.verified === 'undefined') {
+      } else if (typeof user.verified === 'undefined') {
         res.status(400).json({ 'error': 'LOGIN_001' })
       } else {
-        $sql.addUser(data, (err, data) => {
+        $sql.addUser(user, (err, data) => {
           if (err) {
             res.status(500).json({ 'error': 'LOGIN_003' })
           } else {
-            res.cookie('taly', Buffer.from(accessToken).toString('base64'), { expires: new Date(Date.now() + 3600 * 24 * 1000), httpOnly: true })
+            var userInfo = {
+              'id': user.id,
+              'name': user.name,
+              'imgUrl': `https://graph.facebook.com/${user.id}/picture?type=large`
+            }
+            res.cookie('user', JSON.stringify(userInfo), { expires: new Date(Date.now() + 3600 * 24 * 1000), httpOnly: false })
+            res.cookie('token', Buffer.from(accessToken).toString('base64'), { expires: new Date(Date.now() + 3600 * 24 * 1000), httpOnly: true })
             res.json(null)
           }
         })
