@@ -44,14 +44,14 @@ exports.getUserInfo = function (accessToken, next) {
         'id': data.id,
         'access_token': accessToken,
         'name': data.name,
-        'username': data.username,
-        'email': data.email.toString(),
-        'phone': data.mobile_phone.toString(),
-        'birthday': new Date(data.birthday),
-        'gender': data.gender,
+        'username': data.username || '',
+        'email': (data.email || '').toString(),
+        'phone': (data.mobile_phone || '').toString(),
+        'birthday': data.birthday ? new Date(data.birthday) : null,
+        'gender': data.gender || '',
         'location': data.location ? data.location.name : '',
         'hometown': data.hometown ? data.hometown.name : '',
-        'verified': data.verified ? 1 : 0
+        'verified': data.verified === true ? 1 : data.verified === false ? 0 : undefined
       }
       next(null, user)
     })

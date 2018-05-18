@@ -1,4 +1,4 @@
-const sql = require('./../services/mysql')
+const $sql = require('./../services/mysql')
 const $fb = require('./facebook')
 
 /**
@@ -10,25 +10,23 @@ exports.login = function (req, res) {
   if (typeof accessToken === 'string') {
     $fb.getUserInfo(accessToken, (err, data) => {
       if (err) {
-        res.status(400).json({ 'message': 'Lỗi máy chủ.' })
+        res.status(500).json({ 'error': 'LOGIN_002' })
       } else if (typeof data.verified === 'undefined') {
-        res.status(400).json({ 'message': 'Mã truy cập không khả dụng.' })
+        res.status(400).json({ 'error': 'LOGIN_001' })
       } else {
-        sql.addUser(data, (err, data) => {
+        $sql.addUser(data, (err, data) => {
           if (err) {
-            res.status(400).json({ 'message': 'Lỗi sql.' })
+            res.status(500).json({ 'error': 'LOGIN_003' })
           } else {
-            res.cookie('taly', accessToken);
-            res.json({ 'message': 'Đăng nhập thành công.' })
+            res.cookie('taly', Buffer.from(accessToken).toString('base64'), { expires: new Date(Date.now() + 3600 * 24 * 1000), httpOnly: true })
+            res.json(null)
           }
         })
       }
     })
   }
   else {
-    res.status(400).json({
-      message: 'Vui lòng cung cấp mã truy cập hợp lệ.'
-    })
+    res.status(400).json({ 'error': 'LOGIN_001' })
   }
 }
 

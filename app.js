@@ -2,6 +2,7 @@ var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
+var cors = require('cors')
 
 var indexRouter = require('./routes/index')
 
@@ -13,11 +14,10 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Headers', '*')
-  next()
-})
+app.use(cors({
+  origin: 'http://localhost:8080',
+  credentials: true
+}))
 
 app.use('/', indexRouter)
 

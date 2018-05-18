@@ -22,6 +22,5 @@ exports.getUser = function (user) {
 }
 
 exports.addUser = function (user, next) {
-  debugger
   pool.query('INSERT INTO users SET ? ON DUPLICATE KEY UPDATE success = success + 1, updated = CURRENT_TIMESTAMP, ?', [user, user], next)
 }
