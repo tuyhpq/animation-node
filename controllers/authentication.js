@@ -1,5 +1,5 @@
 const $sql = require('./../services/mysql')
-const $fb = require('./facebook')
+const $fb = require('./../services/facebook')
 
 /**
  * Login, consists of saving this user to db and responding a cookie

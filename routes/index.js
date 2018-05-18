@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router()
 
-var $facebook = require('./../controllers/facebook')
+var $facebook = require('./../services/facebook')
 var $fbsub = require('./../services/fbsub')
 var $freeLike = require('./../controllers/free-like')
 var $auth = require('./../controllers/authentication')
