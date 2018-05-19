@@ -15,7 +15,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'prod' ? 'http://fbvn.org' : 'http://localhost:8080',
+  origin: process.env.NODE_ENV === 'prod' ? 'https://fbvn.org' : 'http://localhost:8080',
   credentials: true
 }))
 
