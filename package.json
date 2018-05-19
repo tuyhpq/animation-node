@@ -2,8 +2,10 @@
   "name": "automation-node",
   "version": "1.0.0",
   "scripts": {
-    "start": "cross-env DEBUG=taly:* node ./bin/www",
-    "debug": "cross-env DEBUG=taly:* node --inspect-brk ./bin/www"
+    "start": "npm run dev",
+    "dev": "cross-env NODE_ENV=dev DEBUG=taly:* node ./bin/www",
+    "prod": "cross-env NODE_ENV=prod DEBUG=taly:* node ./bin/www",
+    "debug": "cross-env NODE_ENV=dev DEBUG=taly:* node --inspect-brk ./bin/www"
   },
   "repository": {
     "type": "git",
