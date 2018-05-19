@@ -1,5 +1,5 @@
 const md5 = require('md5')
-const $axios = require('./../services/axios.js')
+const $axios = require('./axios.js')
 
 /**
  * Get access url to get access token

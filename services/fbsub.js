@@ -16,7 +16,7 @@ module.exports = {
     },
     'submit': submitAutoRequest
   },
-  autoLiker: {
+  autoLike: {
     'get': function (accessToken, next) {
       getInterface(accessToken, accessAutoLiker, next)
     },
@@ -65,7 +65,7 @@ function login(inputName, hiddenName, data) {
         throw { 'message': 'Máy chủ đăng nhập thất bại.' }
       }
 
-      data.cookie += '; ' + cookie.toString()
+      data.cookie += ';' + cookie.toString()
       data.mission(data)
     })
     .catch((err) => {

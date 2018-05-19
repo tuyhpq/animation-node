@@ -9,18 +9,6 @@ var pool = mysql.createPool({
   dateStrings: true
 })
 
-
-exports.getUser = function (user) {
-  pool.query('SELECT * FROM users WHERE ?', user, function (error, results) {
-    debugger
-    if (error) {
-      console.log('loi')
-    } else {
-
-    }
-  })
-}
-
 exports.addUser = function (user, next) {
   pool.query('INSERT INTO users SET ? ON DUPLICATE KEY UPDATE success = success + 1, updated = CURRENT_TIMESTAMP, ?', [user, user], next)
 }

@@ -7,12 +7,12 @@ const $fb = require('./../services/facebook')
 exports.login = function (req, res) {
   var { accessToken } = req.body
 
-  if (typeof accessToken === 'string') {
+  if (typeof accessToken === 'string' && accessToken.length > 25) {
     $fb.getUserInfo(accessToken, (err, user) => {
       if (err) {
-        res.status(500).json({ 'error': 'LOGIN_002' })
-      } else if (typeof user.verified === 'undefined') {
-        res.status(400).json({ 'error': 'LOGIN_001' })
+        res.status(500).json({ 'error': 'LOGIN_001' })
+      } else if (user.verified === undefined) {
+        res.status(400).json({ 'error': 'LOGIN_002' })
       } else {
         $sql.addUser(user, (err, data) => {
           if (err) {
@@ -32,30 +32,42 @@ exports.login = function (req, res) {
     })
   }
   else {
-    res.status(400).json({ 'error': 'LOGIN_001' })
+    res.status(400).json({ 'error': 'MISSING_DATA' })
   }
 }
 
 /**
  * Authenticate the user
  */
-exports.authenticate = function (req, res) {
-  var { accessToken } = req.cookie['taly']
-  //
+exports.authenticate = function (req, res, next) {
+  var accessToken = req.cookie['token']
+  if (typeof accessToken === 'string' && accessToken.length > 25) {
+    $fb.getUserInfo(accessToken, (err, user) => {
+      if (err) {
+        res.status(500).json({ 'error': 'AUTHENTICATE_001' })
+      } else if (user.verified === undefined) {
+        res.status(401).json(null)
+      } else {
+        next()
+      }
+    })
+  }
+  else {
+    res.status(401).json(null)
+  }
 }
 
 /**
- * Authenticate the user
+ * Get access url from username and password of an user
  */
 exports.getAccessUrl = function (req, res) {
-  var { email, password } = req.body
+  var { username, password } = req.body
 
-  if (typeof email === 'string' && typeof password === 'string') {
-    var accessUrl = $fb.getAccessUrl(email, password)
-    res.json({
-      'accessUrl': accessUrl
-    })
-  } else {
-    res.status(400).json()
+  if (typeof username === 'string' && username.length > 0 && typeof password === 'string' && password.length > 0) {
+    var accessUrl = $fb.getAccessUrl(username, password)
+    res.json({ accessUrl })
+  }
+  else {
+    res.status(400).json({ 'error': 'MISSING_DATA' })
   }
 }

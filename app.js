@@ -4,7 +4,7 @@ var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 var cors = require('cors')
 
-var indexRouter = require('./routes/index')
+var fbvnRouter = require('./routes/index')
 
 var app = express()
 
@@ -19,6 +19,6 @@ app.use(cors({
   credentials: true
 }))
 
-app.use('/', indexRouter)
+app.use('/api/fbvn', fbvnRouter)
 
 module.exports = app

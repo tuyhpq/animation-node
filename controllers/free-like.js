@@ -1,32 +1,31 @@
-const Axios = require('axios')
-const QueryString = require('querystring')
-var $handle = require('./../services/handle')
+const Stringify = require('querystring').stringify
 
-var axios = Axios.create()
+const $handle = require('./../services/handle')
+const $axios = require('./../services/axios.js')
 
 /**
  * Perform free like
  */
-module.exports.submit = function (rootReq, rootRes) {
+exports.submit = function (rootReq, rootRes) {
   const URL = 'http://thoidaiso.org/post.php'
   var { id } = rootReq.body
 
-  axios.post(URL, QueryString.stringify({ 'id': id }), { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+  $axios.public.post(URL, Stringify({ 'id': id }))
     .then((res) => {
-      console.log(res.data)
       var message = $handle.extractDataFromHtml(res.data, `">`, '<')
       if (!message) {
-        throw { 'message': 'Lỗi không xác định.' }
+        console.log(res.data)
+        res.status(500).json({ 'error': 'FREELIKE_001' })
       }
-      rootRes.json({
-        'message': message,
-        'url': URL,
-        'name': 'id'
-      })
+      else {
+        rootRes.json({
+          'message': message,
+          'url': URL,
+          'name': 'id'
+        })
+      }
     })
     .catch((err) => {
-      rootRes.status(500).json({
-        'message': err.message
-      })
+      rootRes.status(500).json({ 'error': 'FREELIKE_002' })
     })
 }
