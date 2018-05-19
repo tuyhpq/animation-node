@@ -4,7 +4,7 @@ var $fbsub = require('./../services/fbsub')
  * Get forms for auto request
  */
 exports.get = function (req, res) {
-  var accessToken = req.cookie['token']
+  var accessToken = req.accessToken
 
   $fbsub.autoRequest.get(accessToken, (err, data) => {
     if (err) {

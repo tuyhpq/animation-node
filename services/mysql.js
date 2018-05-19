@@ -4,7 +4,7 @@ var pool = mysql.createPool({
   host: 'sg4.fcomet.com',
   port: 3306,
   user: 'fbvnorg_tuyhpq',
-  password: 'Huaphuquy687@',
+  password: 'Huaphuquy687584@@@',
   database: 'fbvnorg_users',
   dateStrings: true
 })

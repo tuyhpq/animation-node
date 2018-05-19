@@ -91,7 +91,7 @@ function accessAutoRequest(data) {
         if (isNaN(waitingTime) || waitingTime === '') {
           throw { 'message': 'Máy chủ quá tải.', 'reload': true }
         } else {
-          data.next(null, { 'waitingTime': Number(waitingTime) })
+          data.next(null, { 'waitingTime': Number(waitingTime), 'name': 'Máy chủ FBSUB (Quốc tế)' })
         }
       } else if (!credit || !urlCaptcha) {
         throw { 'message': 'Không thể lấy dữ liệu tại máy chủ kết bạn.' }
@@ -126,7 +126,8 @@ function respondAutoRequest(data, credit, captchaSrc) {
   data.next(null, {
     'credit': credit,
     'captchaSrc': captchaSrc,
-    'cookie': data.cookie
+    'cookie': data.cookie,
+    'name': 'Máy chủ FBSUB (Quốc tế)'
   })
 }
 
@@ -185,7 +186,7 @@ function accessAutoLiker(data) {
           if (isNaN(waitingTime) || waitingTime === '') {
             throw { 'message': 'Máy chủ quá tải.', 'reload': true }
           } else {
-            data.next(null, { 'waitingTime': Number(waitingTime) })
+            data.next(null, { 'waitingTime': Number(waitingTime), 'name': 'Máy chủ FBSUB (Quốc tế)' })
           }
         } else if (!credit || !urlCaptcha) {
           throw { 'message': 'Không thể lấy dữ liệu tại máy chủ tăng like.' }
@@ -223,7 +224,8 @@ function respondAutoLiker(data, credit, captchaSrc) {
   data.next(null, {
     'credit': credit,
     'captchaSrc': captchaSrc,
-    'cookie': data.cookie
+    'cookie': data.cookie,
+    'name': 'Máy chủ FBSUB (Quốc tế)'
   })
 }
 
