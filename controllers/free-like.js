@@ -12,7 +12,7 @@ exports.submit = function (rootReq, rootRes) {
 
   $axios.public.post(URL, Stringify({ 'id': id }))
     .then((res) => {
-      var message = $handle.extractDataFromHtml(res.data, `">`, '<')
+      var message = $handle.extractDataFromHtml(res.data, `>`, '<')
       if (!message) {
         console.log(res.data)
         res.status(500).json({ 'error': 'FREELIKE_001' })

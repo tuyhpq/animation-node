@@ -3,6 +3,7 @@ const express = require('express')
 var router = express.Router()
 
 var freeLike = require('./../controllers/free-like')
+var contact = require('./../controllers/contact')
 var auth = require('./../controllers/authentication')
 var autoRequest = require('./../controllers/auto-request')
 var autoLike = require('./../controllers/auto-like')
@@ -13,6 +14,9 @@ router.get('/', function (req, res) {
 
 // Free like
 router.post('/free-like', freeLike.submit)
+
+// Contact
+router.post('/feedback', contact.feedback)
 
 // Authentication
 router.post('/login', auth.login)
