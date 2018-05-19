@@ -1,3 +1,4 @@
+const https = require('https')
 const Axios = require('axios')
 
 exports.create = function (config) {
@@ -37,5 +38,8 @@ exports.create = function (config) {
 }
 
 exports.public = Axios.create({
-  timeout: 30000
+  timeout: 30000,
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false
+  })
 })
