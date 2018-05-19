@@ -7,7 +7,7 @@ const $axios = require('./../services/axios.js')
  * Perform free like
  */
 exports.submit = function (rootReq, rootRes) {
-  const URL = 'http://thoidaiso.org/post.php'
+  const URL = 'https://thoidaiso.org/post.php'
   var { id } = rootReq.body
 
   $axios.public.post(URL, Stringify({ 'id': id }))
