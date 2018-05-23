@@ -7,7 +7,7 @@ const $fb = require('./../services/facebook')
 exports.login = function (req, res) {
   var { accessToken } = req.body
 
-  if (typeof accessToken === 'string' && accessToken.length > 25) {
+  if (typeof accessToken === 'string' && accessToken.length > 25 && accessToken.length < 1000) {
     $fb.getUserInfo(accessToken, (err, user) => {
       if (err) {
         res.status(400).json({ 'error': 'LOGIN_001' })
@@ -16,15 +16,16 @@ exports.login = function (req, res) {
       } else {
         $sql.addUser(user, (err, data) => {
           if (err) {
-            res.status(500).json({ 'error': 'LOGIN_003' })
+            res.status(500).json({ 'error': '500_LOGIN_003' })
           } else {
             var userInfo = {
               'id': user.id,
               'name': user.name,
               'imgUrl': `https://graph.facebook.com/${user.id}/picture?type=large`
             }
-            res.cookie('user', JSON.stringify(userInfo), { expires: new Date(Date.now() + 3600 * 24 * 1000), httpOnly: false })
-            res.cookie('token', Buffer.from(accessToken).toString('base64'), { expires: new Date(Date.now() + 3600 * 24 * 1000), httpOnly: true })
+            var expires = new Date(Date.now() + 3600 * 24 * 1000)
+            res.cookie('user', JSON.stringify(userInfo), { expires, httpOnly: false })
+            res.cookie('token', Buffer.from(accessToken).toString('base64'), { expires, httpOnly: true })
             res.json(userInfo)
           }
         })

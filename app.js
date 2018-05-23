@@ -3,10 +3,14 @@ var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 var cors = require('cors')
+var chalk = require('chalk')
 
 var fbvnRouter = require('./routes/index')
 
 var app = express()
+global.logError = message => console.log(chalk.red(message))
+global.logNotice = message => console.log(chalk.blue(message))
+global.logSuccess = message => console.log(chalk.green(message))
 
 app.use(logger('dev'))
 app.use(express.json())

@@ -89,12 +89,12 @@ function accessAutoRequest(data) {
       if (credit === '0') {
         var waitingTime = $handle.extractDataFromHtml(res.data, `var seconds = `, ';')
         if (isNaN(waitingTime) || waitingTime === '') {
-          throw { 'message': 'Máy chủ quá tải.', 'reload': true }
+          throw { 'message': 'Máy chủ quá tải.' }
         } else {
-          data.next(null, { 'waitingTime': Number(waitingTime), 'name': 'Máy chủ FBSUB (Quốc tế)' })
+          data.next(null, { 'waitingTime': Number(waitingTime) })
         }
       } else if (!credit || !urlCaptcha) {
-        throw { 'message': 'Không thể lấy dữ liệu tại máy chủ kết bạn.' }
+        throw { 'message': 'Không thể lấy dữ liệu tại máy chủ.' }
       } else {
         getCaptchaForAutoRequest(urlCaptcha, credit, data)
       }
@@ -126,8 +126,7 @@ function respondAutoRequest(data, credit, captchaSrc) {
   data.next(null, {
     'credit': credit,
     'captchaSrc': captchaSrc,
-    'cookie': data.cookie,
-    'name': 'Máy chủ FBSUB (Quốc tế)'
+    'cookie': data.cookie
   })
 }
 
@@ -152,10 +151,10 @@ function submitAutoRequest(cookie, id, limit, captcha, next) {
         throw { 'message': 'ID không chính xác hoặc tài khoản chưa mở chế độ kết bạn.' }
       }
       else if (message.indexOf('have been sent') !== -1) {
-        next(null, { 'message': 'Tự động kết bạn thành công.' })
+        next(null, { 'message': null })
       }
       else {
-        throw { 'message': 'Máy chủ quá tải.', 'reload': true }
+        throw { 'message': 'Máy chủ quá tải.' }
       }
     })
     .catch((err) => {
@@ -184,12 +183,12 @@ function accessAutoLiker(data) {
         if (credit === '0') {
           var waitingTime = $handle.extractDataFromHtml(res.data, `var seconds = `, ';')
           if (isNaN(waitingTime) || waitingTime === '') {
-            throw { 'message': 'Máy chủ quá tải.', 'reload': true }
+            throw { 'message': 'Máy chủ quá tải.' }
           } else {
-            data.next(null, { 'waitingTime': Number(waitingTime), 'name': 'Máy chủ FBSUB (Quốc tế)' })
+            data.next(null, { 'waitingTime': Number(waitingTime) })
           }
         } else if (!credit || !urlCaptcha) {
-          throw { 'message': 'Không thể lấy dữ liệu tại máy chủ tăng like.' }
+          throw { 'message': 'Không thể lấy dữ liệu tại máy chủ.' }
         } else {
           getCaptchaForAutoLiker(urlCaptcha, credit, data)
         }
@@ -224,8 +223,7 @@ function respondAutoLiker(data, credit, captchaSrc) {
   data.next(null, {
     'credit': credit,
     'captchaSrc': captchaSrc,
-    'cookie': data.cookie,
-    'name': 'Máy chủ FBSUB (Quốc tế)'
+    'cookie': data.cookie
   })
 }
 
@@ -250,10 +248,10 @@ function submitAutoLiker(cookie, id, limit, captcha, next) {
         throw { 'message': 'ID không chính xác hoặc chưa mở chế độ công khai' }
       }
       else if (message.indexOf('have been sent') !== -1) {
-        next(null, { 'message': 'Tăng like thành công.' })
+        next(null, { 'message': null })
       }
       else {
-        throw { 'message': 'Máy chủ quá tải.', 'reload': true }
+        throw { 'message': 'Máy chủ quá tải.' }
       }
     })
     .catch((err) => {

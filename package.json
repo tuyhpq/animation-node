@@ -19,6 +19,7 @@
   "homepage": "https://github.com/tuyhpq/automation-node#readme",
   "dependencies": {
     "axios": "^0.18.0",
+    "chalk": "^2.4.1",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
     "debug": "~2.6.9",

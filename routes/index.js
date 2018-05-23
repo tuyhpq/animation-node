@@ -8,9 +8,8 @@ var auth = require('./../controllers/authentication')
 var autoRequest = require('./../controllers/auto-request')
 var autoLike = require('./../controllers/auto-like')
 
-router.get('/', function (req, res) {
-  res.send('Tác giả: Hứa Phú Quý')
-})
+// Ping api
+router.get('/', (req, res) => { res.json({ 'message': 'Welcome to FBVN' }) })
 
 // Free like
 router.post('/free-like', freeLike.submit)
@@ -23,11 +22,11 @@ router.post('/login', auth.login)
 router.post('/access-url', auth.getAccessUrl)
 
 // Auto request
-router.get('/auto-request', auth.authenticate, autoRequest.get)
-router.post('/auto-request', auth.authenticate, autoRequest.submit)
+router.get('/auto-request/1', auth.authenticate, autoRequest.getFbsub)
+router.post('/auto-request/1', auth.authenticate, autoRequest.submitFbsub)
 
 // Auto like
-router.get('/auto-like', auth.authenticate, autoLike.get)
-router.post('/auto-like', auth.authenticate, autoLike.submit)
+router.get('/auto-like/1', auth.authenticate, autoLike.getFbsub)
+router.post('/auto-like/1', auth.authenticate, autoLike.submitFbsub)
 
 module.exports = router
