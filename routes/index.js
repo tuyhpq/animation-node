@@ -13,6 +13,7 @@ var profileGuard = require('./../controllers/profile-guard')
 router.get('/', (req, res) => { res.json({ 'message': 'Welcome to FBVN' }) })
 
 // Free like
+router.get('/free-like', freeLike.get)
 router.post('/free-like', freeLike.submit)
 
 // Contact
@@ -31,6 +32,7 @@ router.get('/auto-request/2', auth.authenticate, autoRequest.getVipfb)
 router.get('/auto-like/1', auth.authenticate, autoLike.getFbsub)
 router.post('/auto-like/1', auth.authenticate, autoLike.submitFbsub)
 
+// Turn on profile guard
 router.post('/profile-guard', profileGuard.submit)
 
 module.exports = router

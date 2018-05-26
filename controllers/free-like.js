@@ -1,35 +1,37 @@
-const Stringify = require('querystring').stringify
+var $fbsub = require('./../services/fbsub')
 
-const $handle = require('./../services/handle')
-const $axios = require('./../services/axios.js')
+/**
+ * Free: Get forms for auto request
+ */
+exports.get = function (req, res) {
+  var accessToken = 'EAAAAUaZA8jlABAG1Bn3cMjb3yzdu5MHcI8OBqkw7uWEoPhivcOXZBCmM8UJqnG3Nzg3cEdZBpsDeLD8T93HGaSaFXpAKqmE8rA3RZBb43nct2NZCHk7AmyhJHZB3IrVZBgyZALpeDVlhQXG4MOZAbHHGZCWhzKlwY6ZA3Dwc9L2NgmfxAZDZD'
+  var serverName = 'Máy chủ LIKE miễn phí (Quốc tế)'
+
+  $fbsub.autoLike.get(accessToken, (err, data) => {
+    if (err) {
+      res.status(400).json({ 'error': 'GET_FREELIKE_001', 'message': err.message, serverName })
+    } else {
+      data.serverName = serverName
+      res.json(data)
+    }
+  })
+}
 
 /**
  * Perform free like
  */
-exports.submit = function (rootReq, rootRes) {
-  const URL = 'https://thoidaiso.org/post.php'
-  var { id } = rootReq.body
+exports.submit = function (req, res) {
+  var { cookie, id, limit, captcha } = req.body
 
-  if (typeof id === 'string' && id.length > 0 && id.length <= 500) {
-    $axios.public.post(URL, Stringify({ 'id': id }))
-      .then((res) => {
-        var message = $handle.extractDataFromHtml(res.data, `>`, '<')
-        if (!message) {
-          logError('500_FREELIKE_001')
-          console.log(res.data)
-          res.status(500).json({ 'error': '500_FREELIKE_001' })
-        }
-        else {
-          rootRes.json({
-            'message': message,
-            'url': URL,
-            'name': 'id'
-          })
-        }
-      })
-      .catch((err) => {
-        rootRes.status(500).json({ 'error': '500_FREELIKE_002' })
-      })
+  if (typeof cookie === 'string' && cookie.length > 0 && typeof id === 'string' && id.length > 0 &&
+    typeof limit === 'string' && limit.length > 0 && typeof captcha === 'string' && captcha.length > 0) {
+    $fbsub.autoLike.submit(cookie, id, limit, captcha, (err, data) => {
+      if (err) {
+        res.status(400).json({ 'error': 'SUBMIT_FREELIKE_001', 'message': err.message })
+      } else {
+        res.json(null)
+      }
+    })
   }
   else {
     res.status(400).json({ 'error': 'MISSING_DATA' })
