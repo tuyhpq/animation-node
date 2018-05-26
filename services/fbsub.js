@@ -170,35 +170,37 @@ function accessAutoLiker(data) {
     headers: {
       'Cookie': data.cookie
     }
-  }).then(() => {
-    axios.post('/account/liker', Stringify({ 'link': '813730915452307' }), {
-      headers: {
-        'Cookie': data.cookie
-      }
-    })
-      .then((res) => {
-        var credit = $handle.extractDataFromHtml(res.data, `<b  id="credit">`, '<')
-        var urlCaptcha = $handle.extractDataFromHtml(res.data, `/account/captcha.php`, '"', true)
-
-        if (credit === '0') {
-          var waitingTime = $handle.extractDataFromHtml(res.data, `var seconds = `, ';')
-          if (isNaN(waitingTime) || waitingTime === '') {
-            throw { 'message': 'Máy chủ quá tải.' }
-          } else {
-            data.next(null, { 'waitingTime': Number(waitingTime) })
-          }
-        } else if (!credit || !urlCaptcha) {
-          throw { 'message': 'Không thể lấy dữ liệu tại máy chủ.' }
-        } else {
-          getCaptchaForAutoLiker(urlCaptcha, credit, data)
+  })
+    .then(() => {
+      axios.post('/account/liker', Stringify({ 'link': '813730915452307' }), {
+        headers: {
+          'Cookie': data.cookie
         }
       })
-      .catch((err) => {
-        data.next(err, null)
-      })
-  }).catch((err) => {
-    data.next(err, null)
-  })
+        .then((res) => {
+          var credit = $handle.extractDataFromHtml(res.data, `<b  id="credit">`, '<')
+          var urlCaptcha = $handle.extractDataFromHtml(res.data, `/account/captcha.php`, '"', true)
+
+          if (credit === '0') {
+            var waitingTime = $handle.extractDataFromHtml(res.data, `var seconds = `, ';')
+            if (isNaN(waitingTime) || waitingTime === '') {
+              throw { 'message': 'Máy chủ quá tải.' }
+            } else {
+              data.next(null, { 'waitingTime': Number(waitingTime) })
+            }
+          } else if (!credit || !urlCaptcha) {
+            throw { 'message': 'Không thể lấy dữ liệu tại máy chủ.' }
+          } else {
+            getCaptchaForAutoLiker(urlCaptcha, credit, data)
+          }
+        })
+        .catch((err) => {
+          data.next(err, null)
+        })
+    })
+    .catch((err) => {
+      data.next(err, null)
+    })
 }
 
 function getCaptchaForAutoLiker(urlCaptcha, credit, data) {

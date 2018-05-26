@@ -5,7 +5,7 @@ var $fbsub = require('./../services/fbsub')
  */
 exports.getFbsub = function (req, res) {
   var accessToken = req.accessToken
-  var serverName = 'Máy chủ FBSUB (Quốc tế)'
+  var serverName = 'Máy chủ suFB (Quốc tế)'
 
   $fbsub.autoLike.get(accessToken, (err, data) => {
     if (err) {

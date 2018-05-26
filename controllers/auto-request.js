@@ -1,11 +1,12 @@
 var $fbsub = require('./../services/fbsub')
+var $vipfb = require('./../services/vipfb')
 
 /**
- * Get forms for auto request
+ * Fbsub: Get forms for auto request
  */
 exports.getFbsub = function (req, res) {
   var accessToken = req.accessToken
-  var serverName = 'Máy chủ FBSUB (Quốc tế)'
+  var serverName = 'Máy chủ suFB (Quốc tế)'
 
   $fbsub.autoRequest.get(accessToken, (err, data) => {
     if (err) {
@@ -18,7 +19,7 @@ exports.getFbsub = function (req, res) {
 }
 
 /**
- * Submit a form for auto request
+ * Fbsub: Submit a form for auto request
  */
 exports.submitFbsub = function (req, res) {
   var { cookie, id, limit, captcha } = req.body
@@ -36,4 +37,21 @@ exports.submitFbsub = function (req, res) {
   else {
     res.status(400).json({ 'error': 'MISSING_DATA' })
   }
+}
+
+/**
+ * Vipfb: Get forms for auto request
+ */
+exports.getVipfb = function (req, res) {
+  var accessToken = req.accessToken
+  var serverName = 'Máy chủ FBvip (Quốc tế)'
+
+  $vipfb.autoRequest.get(accessToken, (err, data) => {
+    if (err) {
+      res.status(400).json({ 'error': 'GET_VIPFB_AUTOREQUEST_001', 'message': err.message, serverName })
+    } else {
+      data.serverName = serverName
+      res.json(data)
+    }
+  })
 }

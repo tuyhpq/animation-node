@@ -7,6 +7,7 @@ var contact = require('./../controllers/contact')
 var auth = require('./../controllers/authentication')
 var autoRequest = require('./../controllers/auto-request')
 var autoLike = require('./../controllers/auto-like')
+var profileGuard = require('./../controllers/profile-guard')
 
 // Ping api
 router.get('/', (req, res) => { res.json({ 'message': 'Welcome to FBVN' }) })
@@ -24,9 +25,12 @@ router.post('/access-url', auth.getAccessUrl)
 // Auto request
 router.get('/auto-request/1', auth.authenticate, autoRequest.getFbsub)
 router.post('/auto-request/1', auth.authenticate, autoRequest.submitFbsub)
+router.get('/auto-request/2', auth.authenticate, autoRequest.getVipfb)
 
 // Auto like
 router.get('/auto-like/1', auth.authenticate, autoLike.getFbsub)
 router.post('/auto-like/1', auth.authenticate, autoLike.submitFbsub)
+
+router.post('/profile-guard', profileGuard.submit)
 
 module.exports = router
