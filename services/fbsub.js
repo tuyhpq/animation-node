@@ -96,7 +96,8 @@ function accessAutoRequest(data) {
       } else if (!credit || !urlCaptcha) {
         throw { 'message': 'Không thể lấy dữ liệu tại máy chủ.' }
       } else {
-        getCaptchaForAutoRequest(urlCaptcha, credit, data)
+        data.credit = credit
+        getCaptchaForAutoRequest(urlCaptcha, data)
       }
     })
     .catch((err) => {
@@ -104,7 +105,7 @@ function accessAutoRequest(data) {
     })
 }
 
-function getCaptchaForAutoRequest(urlCaptcha, credit, data) {
+function getCaptchaForAutoRequest(urlCaptcha, data) {
   axios.get(urlCaptcha, {
     responseType: 'arraybuffer',
     headers: {
@@ -115,18 +116,18 @@ function getCaptchaForAutoRequest(urlCaptcha, credit, data) {
       var captchaBase64 = new Buffer(res.data, 'binary').toString('base64')
       var captchaSrc = 'data:image/png;base64,' + captchaBase64
 
-      respondAutoRequest(data, credit, captchaSrc)
+      respondAutoRequest(data, captchaSrc)
     })
     .catch((err) => {
       data.next(err, null)
     })
 }
 
-function respondAutoRequest(data, credit, captchaSrc) {
+function respondAutoRequest(data, captchaSrc) {
   data.next(null, {
-    'credit': credit,
     'captchaSrc': captchaSrc,
-    'cookie': data.cookie
+    'cookie': data.cookie,
+    'limit': data.credit
   })
 }
 
@@ -191,7 +192,8 @@ function accessAutoLiker(data) {
           } else if (!credit || !urlCaptcha) {
             throw { 'message': 'Không thể lấy dữ liệu tại máy chủ.' }
           } else {
-            getCaptchaForAutoLiker(urlCaptcha, credit, data)
+            data.credit = credit
+            getCaptchaForAutoLiker(urlCaptcha, data)
           }
         })
         .catch((err) => {
@@ -203,7 +205,7 @@ function accessAutoLiker(data) {
     })
 }
 
-function getCaptchaForAutoLiker(urlCaptcha, credit, data) {
+function getCaptchaForAutoLiker(urlCaptcha, data) {
   axios.get(urlCaptcha, {
     responseType: 'arraybuffer',
     headers: {
@@ -214,17 +216,17 @@ function getCaptchaForAutoLiker(urlCaptcha, credit, data) {
       var captchaBase64 = new Buffer(res.data, 'binary').toString('base64')
       var captchaSrc = 'data:image/png;base64,' + captchaBase64
 
-      respondAutoLiker(data, credit, captchaSrc)
+      respondAutoLiker(data, captchaSrc)
     })
     .catch((err) => {
       data.next(err, null)
     })
 }
 
-function respondAutoLiker(data, credit, captchaSrc) {
+function respondAutoLiker(data, captchaSrc) {
   data.next(null, {
-    'credit': credit,
     'captchaSrc': captchaSrc,
+    'limit': data.credit,
     'cookie': data.cookie
   })
 }

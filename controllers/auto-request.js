@@ -55,3 +55,24 @@ exports.getVipfb = function (req, res) {
     }
   })
 }
+
+/**
+ * Vipfb: Submit a form for auto request
+ */
+exports.submitVipfb = function (req, res) {
+  var { cookie, id, postName, captcha } = req.body
+
+  if (typeof cookie === 'string' && cookie.length > 0 && typeof id === 'string' && id.length > 0 &&
+    typeof postName === 'string' && postName.length > 0 && typeof captcha === 'string' && captcha.length > 0) {
+    $vipfb.autoRequest.submit(cookie, id, captcha, postName, (err, data) => {
+      if (err) {
+        res.status(400).json({ 'error': 'SUBMIT_VIPFB_AUTOREQUEST_001', 'message': err.message })
+      } else {
+        res.json(null)
+      }
+    })
+  }
+  else {
+    res.status(400).json({ 'error': 'MISSING_DATA' })
+  }
+}

@@ -14,7 +14,7 @@ module.exports = {
     'get': function (accessToken, next) {
       getInterface(accessToken, accessAutoRequest, next)
     },
-    //  'submit': submitAutoRequest
+    'submit': submitAutoRequest
   }
 }
 
@@ -79,8 +79,9 @@ function accessAutoRequest(data) {
 
       var waitingTime = $handle.extractDataFromHtml(res.data, `var seconds = `, ';')
       var urlCaptcha = $handle.extractDataFromHtml(res.data, `/NEW_Capthca.php`, '"', true)
+      var postName = $handle.extractDataFromHtml(res.data, `" name="`, '"')
 
-      if (isNaN(waitingTime) || waitingTime === '' || !urlCaptcha) {
+      if (isNaN(waitingTime) || waitingTime === '' || !urlCaptcha || !postName) {
         throw { message: 'Không thể lấy dữ liệu tại máy chủ.' }
       }
       else {
@@ -88,6 +89,7 @@ function accessAutoRequest(data) {
         if (waitingTime >= 0) {
           data.next(null, { 'waitingTime': waitingTime })
         } else {
+          data.postName = postName
           getCaptchaForAutoRequest(urlCaptcha, data)
         }
       }
@@ -118,6 +120,43 @@ function getCaptchaForAutoRequest(urlCaptcha, data) {
 function respondAutoRequest(data, captchaSrc) {
   data.next(null, {
     'captchaSrc': captchaSrc,
-    'cookie': data.cookie
+    'cookie': data.cookie,
+    'postName': data.postName
   })
+}
+
+/**
+ * Submit auto-request
+ */
+function submitAutoRequest(cookie, id, captchaBox, postName, next) {
+  axios.post('/autorequest.php', Stringify({ [postName]: id, captchaBox, 'submit': '' }), {
+    headers: {
+      'Cookie': cookie
+    },
+    maxRedirects: 0,
+    validateStatus: function (status) {
+      return status >= 200 && status < 400;
+    }
+  })
+    .then((res) => {
+      var message = res.headers.location
+      if (message.indexOf('timeLimit') !== -1) {
+        throw { 'message': 'Bạn chưa đủ điều kiện hoạt động tại máy chủ này.' }
+      }
+      else if (message.indexOf('errorCaptcha') !== -1) {
+        throw { 'message': 'Mã captcha không chính xác.' }
+      }
+      // else if (message.indexOf('Not Valid') !== -1) {
+      //   throw { 'message': 'ID không chính xác hoặc tài khoản chưa mở chế độ kết bạn.' }
+      // }
+      else if (message.indexOf('success') !== -1) {
+        next(null, { 'message': null })
+      }
+      else {
+        throw { 'message': 'ID không chính xác hoặc tài khoản chưa mở chế độ kết bạn.' }
+      }
+    })
+    .catch((err) => {
+      next(err, null)
+    })
 }

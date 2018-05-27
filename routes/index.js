@@ -27,6 +27,7 @@ router.post('/access-url', auth.getAccessUrl)
 router.get('/auto-request/1', auth.authenticate, autoRequest.getFbsub)
 router.post('/auto-request/1', auth.authenticate, autoRequest.submitFbsub)
 router.get('/auto-request/2', auth.authenticate, autoRequest.getVipfb)
+router.post('/auto-request/2', auth.authenticate, autoRequest.submitVipfb)
 
 // Auto like
 router.get('/auto-like/1', auth.authenticate, autoLike.getFbsub)
