@@ -24,14 +24,14 @@ router.post('/login', auth.login)
 router.post('/access-url', auth.getAccessUrl)
 
 // Auto request
-router.get('/auto-request/1', auth.authenticate, autoRequest.getFbsub)
-router.post('/auto-request/1', auth.authenticate, autoRequest.submitFbsub)
-router.get('/auto-request/2', auth.authenticate, autoRequest.getVipfb)
-router.post('/auto-request/2', auth.authenticate, autoRequest.submitVipfb)
+router.get('/auto-request/fbsub', auth.authenticate, autoRequest.getFbsub)
+router.post('/auto-request/fbsub', auth.authenticate, autoRequest.submitFbsub)
+router.get('/auto-request/vipfb', auth.authenticate, autoRequest.getVipfb)
+router.post('/auto-request/vipfb', auth.authenticate, autoRequest.submitVipfb)
 
 // Auto like
-router.get('/auto-like/1', auth.authenticate, autoLike.getFbsub)
-router.post('/auto-like/1', auth.authenticate, autoLike.submitFbsub)
+router.get('/auto-like/fbsub', auth.authenticate, autoLike.getFbsub)
+router.post('/auto-like/fbsub', auth.authenticate, autoLike.submitFbsub)
 
 // Turn on profile guard
 router.post('/profile-guard', profileGuard.submit)

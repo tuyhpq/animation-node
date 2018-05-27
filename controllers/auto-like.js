@@ -1,24 +1,20 @@
 var $fbsub = require('./../services/fbsub')
 
 /**
- * Get forms for auto like
+ * Fbsub: Get forms for auto like
  */
 exports.getFbsub = function (req, res) {
-  var accessToken = req.accessToken
-  var serverName = 'Máy chủ suFB (Quốc tế)'
-
-  $fbsub.autoLike.get(accessToken, (err, data) => {
+  $fbsub.autoLike.get(req.accessToken, (err, data) => {
     if (err) {
-      res.status(400).json({ 'error': 'GET_AUTOLIKE_001', 'message': err.message, serverName })
+      res.status(400).json({ 'error': 'GET_FBSUB_AUTOLIKE_001', 'message': err.message })
     } else {
-      data.serverName = serverName
       res.json(data)
     }
   })
 }
 
 /**
- * Submit a form for auto like
+ * Fbsub: Submit a form for auto like
  */
 exports.submitFbsub = function (req, res) {
   var { cookie, id, limit, captcha } = req.body

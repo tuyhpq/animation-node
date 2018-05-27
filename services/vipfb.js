@@ -3,13 +3,11 @@ const Stringify = require('querystring').stringify
 const $axios = require('./axios.js')
 const $handle = require('./handle.js')
 
-const BASE_URL = 'https://vipfb.ru'
-
 const axios = $axios.create({
-  'baseURL': BASE_URL
+  'baseURL': 'https://vipfb.ru'
 })
 
-module.exports = {
+exports = {
   autoRequest: {
     'get': function (accessToken, next) {
       getInterface(accessToken, accessAutoRequest, next)
@@ -79,9 +77,9 @@ function accessAutoRequest(data) {
 
       var waitingTime = $handle.extractDataFromHtml(res.data, `var seconds = `, ';')
       var urlCaptcha = $handle.extractDataFromHtml(res.data, `/NEW_Capthca.php`, '"', true)
-      var postName = $handle.extractDataFromHtml(res.data, `" name="`, '"')
+      var input = $handle.extractDataFromHtml(res.data, `" name="`, '"')
 
-      if (isNaN(waitingTime) || waitingTime === '' || !urlCaptcha || !postName) {
+      if (isNaN(waitingTime) || waitingTime === '' || !urlCaptcha || !input) {
         throw { message: 'Không thể lấy dữ liệu tại máy chủ.' }
       }
       else {
@@ -89,7 +87,7 @@ function accessAutoRequest(data) {
         if (waitingTime >= 0) {
           data.next(null, { 'waitingTime': waitingTime })
         } else {
-          data.postName = postName
+          data.input = input
           getCaptchaForAutoRequest(urlCaptcha, data)
         }
       }
@@ -121,15 +119,15 @@ function respondAutoRequest(data, captchaSrc) {
   data.next(null, {
     'captchaSrc': captchaSrc,
     'cookie': data.cookie,
-    'postName': data.postName
+    'input': data.input
   })
 }
 
 /**
  * Submit auto-request
  */
-function submitAutoRequest(cookie, id, captchaBox, postName, next) {
-  axios.post('/autorequest.php', Stringify({ [postName]: id, captchaBox, 'submit': '' }), {
+function submitAutoRequest(cookie, id, captcha, input, next) {
+  axios.post('/autorequest.php', Stringify({ [input]: id, 'captchaBox': captcha, 'submit': '' }), {
     headers: {
       'Cookie': cookie
     },
@@ -146,14 +144,14 @@ function submitAutoRequest(cookie, id, captchaBox, postName, next) {
       else if (message.indexOf('errorCaptcha') !== -1) {
         throw { 'message': 'Mã captcha không chính xác.' }
       }
-      // else if (message.indexOf('Not Valid') !== -1) {
-      //   throw { 'message': 'ID không chính xác hoặc tài khoản chưa mở chế độ kết bạn.' }
-      // }
+      else if (message.indexOf('ErrorID') !== -1) {
+        throw { 'message': 'ID không chính xác hoặc tài khoản chưa mở chế độ kết bạn.' }
+      }
       else if (message.indexOf('success') !== -1) {
-        next(null, { 'message': null })
+        next(null, null)
       }
       else {
-        throw { 'message': 'ID không chính xác hoặc tài khoản chưa mở chế độ kết bạn.' }
+        throw { 'message': 'Máy chủ quá tải.' }
       }
     })
     .catch((err) => {

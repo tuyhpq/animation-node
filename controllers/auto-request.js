@@ -5,14 +5,10 @@ var $vipfb = require('./../services/vipfb')
  * Fbsub: Get forms for auto request
  */
 exports.getFbsub = function (req, res) {
-  var accessToken = req.accessToken
-  var serverName = 'Máy chủ suFB (Quốc tế)'
-
-  $fbsub.autoRequest.get(accessToken, (err, data) => {
+  $fbsub.autoRequest.get(req.accessToken, (err, data) => {
     if (err) {
-      res.status(400).json({ 'error': 'GET_FBSUB_AUTOREQUEST_001', 'message': err.message, serverName })
+      res.status(400).json({ 'error': 'GET_FBSUB_AUTOREQUEST_001', 'message': err.message })
     } else {
-      data.serverName = serverName
       res.json(data)
     }
   })
@@ -43,14 +39,10 @@ exports.submitFbsub = function (req, res) {
  * Vipfb: Get forms for auto request
  */
 exports.getVipfb = function (req, res) {
-  var accessToken = req.accessToken
-  var serverName = 'Máy chủ FBvip (Quốc tế)'
-
-  $vipfb.autoRequest.get(accessToken, (err, data) => {
+  $vipfb.autoRequest.get(req.accessToken, (err, data) => {
     if (err) {
-      res.status(400).json({ 'error': 'GET_VIPFB_AUTOREQUEST_001', 'message': err.message, serverName })
+      res.status(400).json({ 'error': 'GET_VIPFB_AUTOREQUEST_001', 'message': err.message })
     } else {
-      data.serverName = serverName
       res.json(data)
     }
   })
@@ -60,11 +52,11 @@ exports.getVipfb = function (req, res) {
  * Vipfb: Submit a form for auto request
  */
 exports.submitVipfb = function (req, res) {
-  var { cookie, id, postName, captcha } = req.body
+  var { cookie, id, input, captcha } = req.body
 
   if (typeof cookie === 'string' && cookie.length > 0 && typeof id === 'string' && id.length > 0 &&
-    typeof postName === 'string' && postName.length > 0 && typeof captcha === 'string' && captcha.length > 0) {
-    $vipfb.autoRequest.submit(cookie, id, captcha, postName, (err, data) => {
+    typeof input === 'string' && input.length > 0 && typeof captcha === 'string' && captcha.length > 0) {
+    $vipfb.autoRequest.submit(cookie, id, captcha, input, (err, data) => {
       if (err) {
         res.status(400).json({ 'error': 'SUBMIT_VIPFB_AUTOREQUEST_001', 'message': err.message })
       } else {

@@ -3,13 +3,11 @@ const Stringify = require('querystring').stringify
 const $axios = require('./axios.js')
 const $handle = require('./handle.js')
 
-const BASE_URL = 'https://fbsub.pro'
-
 const axios = $axios.create({
-  'baseURL': BASE_URL
+  'baseURL': 'https://fbsub.pro'
 })
 
-module.exports = {
+exports = {
   autoRequest: {
     'get': function (accessToken, next) {
       getInterface(accessToken, accessAutoRequest, next)
@@ -83,20 +81,20 @@ function accessAutoRequest(data) {
     }
   })
     .then((res) => {
-      var credit = $handle.extractDataFromHtml(res.data, `<b  id="credit">`, '<')
+      var limit = $handle.extractDataFromHtml(res.data, `<b  id="credit">`, '<')
       var urlCaptcha = $handle.extractDataFromHtml(res.data, `/account/captcha.php`, '"', true)
 
-      if (credit === '0') {
+      if (limit === '0') {
         var waitingTime = $handle.extractDataFromHtml(res.data, `var seconds = `, ';')
         if (isNaN(waitingTime) || waitingTime === '') {
           throw { 'message': 'Máy chủ quá tải.' }
         } else {
           data.next(null, { 'waitingTime': Number(waitingTime) })
         }
-      } else if (!credit || !urlCaptcha) {
+      } else if (!limit || !urlCaptcha) {
         throw { 'message': 'Không thể lấy dữ liệu tại máy chủ.' }
       } else {
-        data.credit = credit
+        data.limit = limit
         getCaptchaForAutoRequest(urlCaptcha, data)
       }
     })
@@ -127,7 +125,7 @@ function respondAutoRequest(data, captchaSrc) {
   data.next(null, {
     'captchaSrc': captchaSrc,
     'cookie': data.cookie,
-    'limit': data.credit
+    'limit': data.limit
   })
 }
 
@@ -152,7 +150,7 @@ function submitAutoRequest(cookie, id, limit, captcha, next) {
         throw { 'message': 'ID không chính xác hoặc tài khoản chưa mở chế độ kết bạn.' }
       }
       else if (message.indexOf('have been sent') !== -1) {
-        next(null, { 'message': null })
+        next(null, null)
       }
       else {
         throw { 'message': 'Máy chủ quá tải.' }
@@ -179,20 +177,20 @@ function accessAutoLiker(data) {
         }
       })
         .then((res) => {
-          var credit = $handle.extractDataFromHtml(res.data, `<b  id="credit">`, '<')
+          var limit = $handle.extractDataFromHtml(res.data, `<b  id="credit">`, '<')
           var urlCaptcha = $handle.extractDataFromHtml(res.data, `/account/captcha.php`, '"', true)
 
-          if (credit === '0') {
+          if (limit === '0') {
             var waitingTime = $handle.extractDataFromHtml(res.data, `var seconds = `, ';')
             if (isNaN(waitingTime) || waitingTime === '') {
               throw { 'message': 'Máy chủ quá tải.' }
             } else {
               data.next(null, { 'waitingTime': Number(waitingTime) })
             }
-          } else if (!credit || !urlCaptcha) {
+          } else if (!limit || !urlCaptcha) {
             throw { 'message': 'Không thể lấy dữ liệu tại máy chủ.' }
           } else {
-            data.credit = credit
+            data.limit = limit
             getCaptchaForAutoLiker(urlCaptcha, data)
           }
         })
@@ -226,7 +224,7 @@ function getCaptchaForAutoLiker(urlCaptcha, data) {
 function respondAutoLiker(data, captchaSrc) {
   data.next(null, {
     'captchaSrc': captchaSrc,
-    'limit': data.credit,
+    'limit': data.limit,
     'cookie': data.cookie
   })
 }
@@ -249,10 +247,10 @@ function submitAutoLiker(cookie, id, limit, captcha, next) {
         throw { 'message': 'Mã captcha không chính xác.' }
       }
       else if (message.indexOf('not available or your followers not public') !== -1) {
-        throw { 'message': 'ID không chính xác hoặc chưa mở chế độ công khai' }
+        throw { 'message': 'ID không chính xác hoặc chưa mở chế độ công khai.' }
       }
       else if (message.indexOf('have been sent') !== -1) {
-        next(null, { 'message': null })
+        next(null, null)
       }
       else {
         throw { 'message': 'Máy chủ quá tải.' }
