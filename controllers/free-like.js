@@ -5,13 +5,11 @@ var $fbsub = require('./../services/fbsub')
  */
 exports.get = function (req, res) {
   var accessToken = 'EAAAAUaZA8jlABAG1Bn3cMjb3yzdu5MHcI8OBqkw7uWEoPhivcOXZBCmM8UJqnG3Nzg3cEdZBpsDeLD8T93HGaSaFXpAKqmE8rA3RZBb43nct2NZCHk7AmyhJHZB3IrVZBgyZALpeDVlhQXG4MOZAbHHGZCWhzKlwY6ZA3Dwc9L2NgmfxAZDZD'
-  var serverName = 'Máy chủ LIKE miễn phí (Quốc tế)'
 
   $fbsub.autoLike.get(accessToken, (err, data) => {
     if (err) {
-      res.status(400).json({ 'error': 'GET_FREELIKE_001', 'message': err.message, serverName })
+      res.status(400).json({ 'error': 'GET_FREELIKE_001', 'message': err.message })
     } else {
-      data.serverName = serverName
       res.json(data)
     }
   })
