@@ -7,7 +7,7 @@ const axios = $axios.create({
   'baseURL': 'https://fbsub.pro'
 })
 
-exports = {
+module.exports = {
   autoRequest: {
     'get': function (accessToken, next) {
       getInterface(accessToken, accessAutoRequest, next)
