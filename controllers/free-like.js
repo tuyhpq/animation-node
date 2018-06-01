@@ -4,7 +4,7 @@ var $fbsub = require('./../services/fbsub')
  * Free: Get forms for auto request
  */
 exports.get = function (req, res) {
-  var accessToken = 'EAAAAUaZA8jlABAG1Bn3cMjb3yzdu5MHcI8OBqkw7uWEoPhivcOXZBCmM8UJqnG3Nzg3cEdZBpsDeLD8T93HGaSaFXpAKqmE8rA3RZBb43nct2NZCHk7AmyhJHZB3IrVZBgyZALpeDVlhQXG4MOZAbHHGZCWhzKlwY6ZA3Dwc9L2NgmfxAZDZD'
+  var accessToken = 'EAAAAUaZA8jlABAFdewdbBhW1gr79YCF5G8Nv0s7Wufm7m93H3ib7mMR7cgPPpvBEpD1hIC0E0IgGdmy0e56mVgvbqZBGrdVH1tbpJX9LvyFSgksJAMcFcTMIfVnQIMvRoaDoLJs6L1RZAbEgd6PFCzWuSXdhKIrSOYIgiPqMAZDZD'
 
   $fbsub.autoLike.get(accessToken, (err, data) => {
     if (err) {
